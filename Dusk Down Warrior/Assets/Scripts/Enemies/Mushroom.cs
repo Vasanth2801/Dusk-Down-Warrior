@@ -101,6 +101,7 @@ public class Mushroom : MonoBehaviour
 
     void Attack()
     {
+        animator.SetTrigger("Attack");
         Collider2D[] hitPlayer = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, playerLayer);
         foreach(Collider2D player in hitPlayer)
         {
@@ -120,6 +121,7 @@ public class Mushroom : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
+            animator.SetBool("isChasing", false);
             isChasing = false;
             rb.linearVelocity = Vector2.zero;
         }

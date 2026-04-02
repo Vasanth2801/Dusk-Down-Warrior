@@ -40,8 +40,9 @@ public class Goblin : MonoBehaviour
         {
             isChasing = false;
             rb.linearVelocity = Vector2.zero;
+            animator.SetBool("isChasing", false);
 
-            if(!isAttacking)
+            if (!isAttacking)
             {
                 StartCoroutine(AttackCoroutine());
             }
@@ -65,6 +66,7 @@ public class Goblin : MonoBehaviour
 
     void Chase()
     {
+        animator.SetBool("isChasing", true);
         Vector2 direction = (player.position - transform.position).normalized;
         rb.linearVelocity = direction * speed;
     }
@@ -101,6 +103,7 @@ public class Goblin : MonoBehaviour
 
     void Attack()
     {
+        animator.SetTrigger("Attack");
         Collider2D[] hitPlayer = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, playerLayer);
 
         foreach(Collider2D player in hitPlayer)
@@ -126,6 +129,7 @@ public class Goblin : MonoBehaviour
     {
         if(collision.gameObject.tag == "Player")
         {
+            animator.SetBool("isChasing", false);
             isChasing = false;
             rb.linearVelocity = Vector2.zero;
         }

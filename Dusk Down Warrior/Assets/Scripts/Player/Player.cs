@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour
 {
@@ -16,6 +15,7 @@ public class Player : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private Animator animator;
 
     [Header("Input Settings")]
     [SerializeField] private float moveInput;
@@ -31,6 +31,8 @@ public class Player : MonoBehaviour
         {
             Flip();
         }
+
+        HandleAnimations();
     }
 
     private void FixedUpdate()
@@ -56,5 +58,11 @@ public class Player : MonoBehaviour
     {
         facingDirection *= -1;
         transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+    }
+
+    void HandleAnimations()
+    {
+        animator.SetFloat("Speed", Mathf.Abs(moveInput));
+        animator.SetBool("isJumping", rb.linearVelocity.y > 0.1f);
     }
 }

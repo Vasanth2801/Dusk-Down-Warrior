@@ -16,10 +16,20 @@ public class Player : MonoBehaviour
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Animator animator;
+    [SerializeField] private CapsuleCollider2D capsuleCollider;
+
+    [Header("Crouch Settings")]
+    [SerializeField] private Vector2 normalColliderSize;
+    [SerializeField] private Vector2 crouchColliderSize;
+    [SerializeField] private bool isCrouching;
+
+    [Header("Attack Settings")]
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private float attackRange;
+    [SerializeField] private LayerMask enemyLayer;
 
     [Header("Input Settings")]
     [SerializeField] private float moveInput;
-
 
     private void Update()
     {
@@ -37,7 +47,15 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Duck();
+
+        DuckUp();
+
         Move();
+
+        Attack();
+
+        CrouchAttack();
     }
 
     void Move()
@@ -51,6 +69,54 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        }
+    }
+
+    void Duck()
+    {
+        if(Input.GetKeyDown(KeyCode.S) && isGrounded)
+        {
+            isCrouching = true;
+            capsuleCollider.size = crouchColliderSize;
+            animator.SetBool("isCrouching", true);
+        }
+    }
+
+    void DuckUp()
+    {
+        if(Input.GetKeyUp(KeyCode.S))
+        {
+            isCrouching = false;
+            capsuleCollider.size = normalColliderSize;
+            animator.SetBool("isCrouching", false);
+        }
+    }
+
+    void Attack()
+    {
+        if(Input.GetKeyDown(KeyCode.J))
+        {
+            animator.SetTrigger("Attack");
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
+            foreach(Collider2D enemy in hitEnemies)
+            {
+                // Implement damage to enemy here
+                Debug.Log("Hit " + enemy.name);
+            }
+        }
+    }
+
+    void CrouchAttack()
+    {
+        if(Input.GetKeyDown(KeyCode.K) && isCrouching)
+        {
+            animator.SetTrigger("CrouchAttack");
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
+            foreach(Collider2D enemy in hitEnemies)
+            {
+                // Implement damage to enemy here
+                Debug.Log("Crouch Attack Hit " + enemy.name);
+            }
         }
     }
 
